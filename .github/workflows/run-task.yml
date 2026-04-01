@@ -1,0 +1,49 @@
+name: Run Task V0
+
+on:
+  workflow_dispatch:
+    inputs:
+      opportunity_id:
+        description: "Opportunity ID"
+        required: true
+        type: string
+      repo_url:
+        description: "Repository URL"
+        required: true
+        type: string
+      issue_url:
+        description: "Issue URL"
+        required: true
+        type: string
+
+jobs:
+  run-demo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Create result directory
+        run: mkdir -p output
+
+      - name: Simulate execution
+        run: |
+          cat > output/result.json <<EOF
+          {
+            "opportunity_id": "${{ inputs.opportunity_id }}",
+            "repo_url": "${{ inputs.repo_url }}",
+            "issue_url": "${{ inputs.issue_url }}",
+            "status": "done",
+            "message": "V0 executed successfully"
+          }
+          EOF
+
+      - name: Show result
+        run: cat output/result.json
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ inputs.opportunity_id }}
+          path: output/result.json
